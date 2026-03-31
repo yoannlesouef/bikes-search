@@ -8,63 +8,100 @@ dialog { border: none; padding: 0; }
 
 /* ─── Design tokens ──────────────────────────────────────────────────────── */
 :root {
-  /* Colours */
-  --c-bg:        #f8f8f6;
-  --c-surface:   #ffffff;
-  --c-border:    #e4e4e0;
-  --c-text:      #1a1a18;
-  --c-muted:     #6b6b67;
-  --c-accent:    #1a6bff;
-  --c-accent-dk: #0d52cc;
-  --c-road:      #1a6bff;
-  --c-gravel:    #2e9e6b;
-  --c-mtb:       #d46b00;
-  --c-danger:    #d43030;
-  --c-warning:   #e8a020;
-  --c-success:   #2e9e6b;
+  /* ── Colours ──────────────────────────────────────────────────────────── */
+  --c-bg:           #f4f4f2;
+  --c-surface:      #ffffff;
+  --c-surface-2:    #f0efed;
+  --c-border:       #e2e2de;
+  --c-border-strong:#c8c8c4;
+  --c-text:         #111110;
+  --c-text-2:       #3d3d3a;
+  --c-muted:        #6a6a66;
+  --c-muted-light:  #a8a8a4;
 
-  /* Spacing */
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-8: 32px;
-  --sp-10: 40px;
-  --sp-12: 48px;
-  --sp-16: 64px;
+  /* Accent — energetic red-coral */
+  --c-accent:       #e63946;
+  --c-accent-dk:    #c0272f;
+  --c-accent-bg:    #fdeced;
 
-  /* Typography */
+  /* Dark surfaces */
+  --c-navy:         #0d1b2a;
+  --c-navy-2:       #172436;
+
+  /* Category colours */
+  --c-road:         #1a6bff;
+  --c-road-bg:      #deeaff;
+  --c-gravel:       #1f8c56;
+  --c-gravel-bg:    #d0f0e0;
+  --c-mtb:          #d45f00;
+  --c-mtb-bg:       #fde2c8;
+
+  /* Semantic */
+  --c-danger:       #d43030;
+  --c-warning:      #e8a020;
+  --c-success:      #1f8c56;
+
+  /* ── Typography ───────────────────────────────────────────────────────── */
   --font: 'Inter', system-ui, -apple-system, sans-serif;
+
   --fs-xs:  11px;
   --fs-sm:  13px;
   --fs-md:  15px;
   --fs-lg:  18px;
-  --fs-xl:  24px;
-  --fs-2xl: 32px;
+  --fs-xl:  22px;
+  --fs-2xl: 30px;
   --fs-3xl: 48px;
-  --fw-normal: 400;
-  --fw-medium: 500;
+  --fs-4xl: 64px;
+
+  --fw-normal:   400;
+  --fw-medium:   500;
   --fw-semibold: 600;
-  --fw-bold: 700;
-  --lh-tight: 1.2;
+  --fw-bold:     700;
+  --fw-black:    800;
+
+  --lh-tight: 1.1;
+  --lh-snug:  1.25;
   --lh-base:  1.5;
 
-  /* Radius */
+  --ls-tight: -0.03em;
+  --ls-wide:   0.06em;
+
+  /* ── Spacing ──────────────────────────────────────────────────────────── */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+
+  /* ── Border radius ────────────────────────────────────────────────────── */
+  --r-xs:   4px;
   --r-sm:   6px;
   --r-md:   10px;
   --r-lg:   16px;
+  --r-xl:   24px;
   --r-full: 999px;
 
-  /* Shadow */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+  /* ── Shadows ──────────────────────────────────────────────────────────── */
+  --shadow-xs:         0 1px 2px rgba(0,0,0,.06);
+  --shadow-sm:         0 2px 6px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:         0 6px 20px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+  --shadow-lg:         0 16px 48px rgba(0,0,0,.14), 0 4px 12px rgba(0,0,0,.08);
+  --shadow-xl:         0 24px 64px rgba(0,0,0,.18), 0 8px 24px rgba(0,0,0,.10);
+  --shadow-card-hover: 0 12px 32px rgba(0,0,0,.13), 0 3px 8px rgba(0,0,0,.07);
+  --shadow-tray:       0 -6px 32px rgba(0,0,0,.12), 0 -1px 4px rgba(0,0,0,.06);
 
-  /* Transitions */
-  --t-fast: 120ms ease;
-  --t-base: 200ms ease;
+  /* ── Transitions ──────────────────────────────────────────────────────── */
+  --t-fast:   110ms ease;
+  --t-base:   190ms ease;
+  --t-slow:   320ms ease;
+  --t-spring: 400ms cubic-bezier(.4,0,.2,1);
 }
 
 /* ─── Base styles ────────────────────────────────────────────────────────── */
@@ -77,11 +114,13 @@ body {
   color: var(--c-text);
   background: var(--c-bg);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4 {
-  line-height: var(--lh-tight);
+  line-height: var(--lh-snug);
   font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
 }
 
 /* ─── Layout helpers ─────────────────────────────────────────────────────── */
@@ -97,24 +136,32 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-  height: 56px;
+  /* Frosted glass */
+  background: rgba(255, 255, 255, .82);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(226, 226, 222, .80);
+  height: 52px;
   display: flex;
   align-items: center;
 }
+
 .topnav .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-4);
 }
+
 .topnav__logo {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-  letter-spacing: -.5px;
+  font-size: 17px;
+  font-weight: var(--fw-black);
+  letter-spacing: -0.04em;
   color: var(--c-text);
+  line-height: 1;
+  flex-shrink: 0;
 }
+
 .topnav__logo span { color: var(--c-accent); }
 
 /* ─── Utility classes ────────────────────────────────────────────────────── */
@@ -123,8 +170,15 @@ h1, h2, h3, h4 {
   padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+
 .text-muted { color: var(--c-muted); }
 .text-sm    { font-size: var(--fs-sm); }
+
+/* ─── Focus styles ───────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2.5px solid var(--c-accent);
+  outline-offset: 2px;
+}
 
 /* ─── Toast ──────────────────────────────────────────────────────────────── */
 #toast {
@@ -132,18 +186,20 @@ h1, h2, h3, h4 {
   bottom: var(--sp-8);
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--c-text);
+  background: var(--c-navy);
   color: #fff;
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
-  padding: var(--sp-3) var(--sp-5);
+  padding: var(--sp-3) var(--sp-6);
   border-radius: var(--r-full);
+  box-shadow: var(--shadow-md);
   opacity: 0;
   transition: opacity var(--t-base), transform var(--t-base);
   pointer-events: none;
   z-index: 9999;
   white-space: nowrap;
 }
+
 #toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
@@ -151,12 +207,28 @@ h1, h2, h3, h4 {
 
 /* ─── Skeleton loader ────────────────────────────────────────────────────── */
 @keyframes shimmer {
-  0%   { background-position: -400px 0; }
-  100% { background-position:  400px 0; }
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
 }
+
 .skeleton {
   border-radius: var(--r-md);
-  background: linear-gradient(90deg, #ebebeb 25%, #f5f5f5 50%, #ebebeb 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.4s infinite;
+  background: linear-gradient(
+    90deg,
+    var(--c-surface-2) 25%,
+    #e8e8e5 50%,
+    var(--c-surface-2) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  html { scroll-behavior: auto; }
 }
