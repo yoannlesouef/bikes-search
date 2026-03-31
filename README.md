@@ -3,7 +3,8 @@
 A guided bike selection and comparison tool. Helps cyclists — from beginners to competitors — find the right bike through a progressive, non-technical-first approach: start with use case questions, then refine with technical filters, and finally compare shortlisted models side-by-side.
 
 ## Live demo
-https://www.bikes-search.com
+- Test: https://yoannlesouef.github.io/bikes-search/
+- Production: https://www.bikes-search.com
 
 ## Setup
 ```bash
