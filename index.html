@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bike Search — Find Your Perfect Bike</title>
+  <meta name="description" content="Guided bike search and comparator. Find your perfect road, gravel, or mountain bike in minutes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/wizard.css">
+</head>
+<body>
+
+  <nav class="topnav">
+    <div class="container">
+      <a class="topnav__logo" href="index.html">bike<span>search</span></a>
+      <a href="results.html" class="btn btn-ghost text-sm">Browse all bikes</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__content">
+        <h1 class="hero__title">Find your <em>perfect</em> bike</h1>
+        <p class="hero__sub">Answer 4 quick questions. We'll match you with the right bike — no jargon required.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wizard -->
+  <main class="wizard-page">
+    <div class="container">
+      <div id="wizard-root"></div>
+      <p class="wizard-skip">
+        Already know what you want?
+        <a href="results.html">Browse all bikes →</a>
+      </p>
+    </div>
+  </main>
+
+  <div id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="config.js" onerror="console.warn('config.js not found — set window.CATALOG_API_KEY manually')"></script>
+  <script type="module">
+    import { initWizard } from './js/wizard.js';
+    initWizard('wizard-root');
+  </script>
+</body>
+</html>

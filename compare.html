@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compare Bikes — Bike Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/compare.css">
+</head>
+<body>
+
+  <nav class="topnav">
+    <div class="container">
+      <a class="topnav__logo" href="index.html">bike<span>search</span></a>
+      <a href="results.html" class="btn btn-ghost text-sm">← Back to results</a>
+    </div>
+  </nav>
+
+  <main class="compare-page">
+    <div class="container">
+      <h1 class="compare-heading">Compare bikes</h1>
+      <div id="compare-root" class="compare-root"></div>
+    </div>
+  </main>
+
+  <div id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="config.js" onerror="console.warn('config.js not found')"></script>
+  <script type="module">
+    import { initComparePage } from './js/comparator.js';
+    initComparePage();
+  </script>
+</body>
+</html>

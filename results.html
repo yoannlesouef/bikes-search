@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Results — Bike Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/results.css">
+</head>
+<body>
+
+  <nav class="topnav">
+    <div class="container">
+      <a class="topnav__logo" href="index.html">bike<span>search</span></a>
+      <div class="topnav__search">
+        <input type="search" id="search-input" placeholder="Search brand or model…" class="search-input" aria-label="Search bikes">
+      </div>
+      <a href="index.html" class="btn btn-ghost text-sm">← Restart wizard</a>
+    </div>
+  </nav>
+
+  <div class="results-layout">
+
+    <!-- Sidebar filters -->
+    <aside class="filters-sidebar" id="filters-sidebar">
+      <div class="filters-sidebar__header">
+        <h2 class="filters-sidebar__title">Filters</h2>
+        <button class="btn btn-ghost text-sm" id="btn-close-filters" aria-label="Close filters">✕</button>
+      </div>
+      <div id="filter-panel"></div>
+    </aside>
+
+    <!-- Main -->
+    <main class="results-main">
+
+      <!-- Toolbar -->
+      <div class="results-toolbar">
+        <div class="results-toolbar__left">
+          <button class="btn btn-secondary" id="btn-toggle-filters" aria-label="Toggle filters">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Filters
+          </button>
+          <span class="results-count" id="results-count">Loading…</span>
+        </div>
+        <div class="results-toolbar__right">
+          <select id="sort-select" class="filter-select sort-select" aria-label="Sort results">
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="weight_asc">Weight: Lightest</option>
+            <option value="name_asc">Name: A–Z</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Active filter tags -->
+      <div id="active-filters" class="active-filters"></div>
+
+      <!-- Cards grid -->
+      <div id="results-grid" class="results-grid"></div>
+
+      <!-- Load more -->
+      <div class="load-more-wrap">
+        <button class="btn btn-secondary btn-lg" id="btn-load-more" style="display:none">
+          Load more bikes
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Detail drawer -->
+  <dialog id="detail-dialog" class="modal">
+    <div class="modal__header">
+      <h3></h3>
+      <button class="modal__close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body"></div>
+  </dialog>
+
+  <!-- Size recommender dialog -->
+  <dialog id="size-dialog" class="modal">
+    <div class="modal__header">
+      <h3>Find your size</h3>
+      <button class="modal__close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="size-modal-body"></div>
+    </div>
+  </dialog>
+
+  <!-- Comparator tray -->
+  <div class="compare-tray" id="compare-tray" role="region" aria-label="Compare tray">
+    <div class="compare-tray__left">
+      <span class="compare-tray__label">Compare:</span>
+      <div class="compare-tray__bikes"></div>
+    </div>
+    <button class="btn btn-primary compare-tray__btn" disabled>
+      <span class="compare-tray__count">Compare (0)</span>
+    </button>
+  </div>
+
+  <div id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="config.js" onerror="console.warn('config.js not found')"></script>
+  <script type="module">
+    import { initResults, setupLoadMore } from './js/results.js';
+    import { initSizeRecommender }        from './js/size-recommender.js';
+
+    // Modal close buttons
+    document.querySelectorAll('.modal__close').forEach(btn => {
+      btn.closest('dialog').querySelector('.modal__close')
+        .addEventListener('click', () => btn.closest('dialog').close());
+    });
+    document.querySelectorAll('dialog').forEach(d => {
+      d.addEventListener('click', e => { if (e.target === d) d.close(); });
+    });
+
+    // Filters sidebar toggle
+    const sidebar  = document.getElementById('filters-sidebar');
+    const btnToggle = document.getElementById('btn-toggle-filters');
+    const btnClose  = document.getElementById('btn-close-filters');
+    btnToggle?.addEventListener('click', () => sidebar.classList.toggle('open'));
+    btnClose?.addEventListener('click',  () => sidebar.classList.remove('open'));
+
+    initResults();
+    setupLoadMore();
+    initSizeRecommender();
+  </script>
+</body>
+</html>

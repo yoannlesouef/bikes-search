@@ -1,0 +1,67 @@
+/* ─── Page ───────────────────────────────────────────────────────────────── */
+.compare-page { padding: var(--sp-8) 0 var(--sp-16); }
+.compare-heading { font-size: var(--fs-2xl); margin-bottom: var(--sp-8); }
+.compare-root { min-height: 200px; }
+
+/* ─── Table wrapper (horizontal scroll on mobile) ────────────────────────── */
+.compare-table-wrap { overflow-x: auto; }
+
+/* ─── Compare table ──────────────────────────────────────────────────────── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  min-width: 520px;
+}
+
+.compare-table__label-col { width: 160px; min-width: 120px; }
+.compare-table__bike-col  { min-width: 200px; }
+
+/* Label cells */
+.compare-table__label {
+  padding: var(--sp-3) var(--sp-4) var(--sp-3) 0;
+  color: var(--c-muted);
+  font-weight: var(--fw-medium);
+  vertical-align: top;
+  border-bottom: 1px solid var(--c-border);
+  white-space: nowrap;
+}
+
+/* Value cells */
+.compare-table__cell {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--c-border);
+  vertical-align: top;
+}
+
+/* First row = photos, no border above */
+.compare-table tbody tr:first-child .compare-table__cell,
+.compare-table tbody tr:first-child .compare-table__label { border-top: none; }
+
+/* Highlight differing rows */
+.row-differs .compare-table__cell { background: #fffbf0; }
+.row-same    .compare-table__cell { color: var(--c-muted); }
+
+/* Remove column button */
+.compare-col-remove {
+  display: block;
+  margin: 0 auto var(--sp-3);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  color: var(--c-muted);
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.compare-col-remove:hover { background: #ffe0e0; border-color: var(--c-danger); color: var(--c-danger); }
+
+/* Alert */
+.alert-warning {
+  background: #fde8cc;
+  color: #7a3a00;
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-5);
+}
