@@ -1,171 +1,113 @@
 /**
- * Airtable bike catalog API client.
+ * Bike catalog client — reads from data/bikes.json.
  *
- * Base:  appui8DPkWd2poZxy
- * Table: tblSDb5DQPpDmu3o2 (Bikes)
- *
- * Requires window.CATALOG_API_KEY to be set before any call.
- * In development, set it in config.js (git-ignored).
+ * The JSON file is the single source of truth for bike data.
+ * To add or update bikes, edit data/bikes.json and commit.
  */
 
-const BASE_ID  = 'appui8DPkWd2poZxy';
-const TABLE_ID = 'tblSDb5DQPpDmu3o2';
-const BASE_URL = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`;
-
+const DATA_URL  = './data/bikes.json';
 const PAGE_SIZE = 24;
 
-// ─── Field name map (Airtable → data model) ──────────────────────────────────
+// Module-level cache: fetched once per session.
+let _cache = null;
 
-function normalise(record) {
-  const f = record.fields;
-  return {
-    id:               record.id,
-    brand:            f['Brand']            ?? null,
-    model:            f['Model']            ?? null,
-    category:         f['Category']         ?? null,
-    year:             f['Year']             ?? null,
-    price_eur:        f['Price EUR']        ?? null,
-    weight_g:         f['Weight g']         ?? null,
-    frame_material:   f['Frame Material']   ?? null,
-    groupset_brand:   f['Groupset Brand']   ?? null,
-    groupset_level:   f['Groupset Level']   ?? null,
-    brake_type:       f['Brake Type']       ?? null,
-    wheel_size:       f['Wheel Size']       ?? null,
-    tire_clearance_mm:f['Tire Clearance mm']?? null,
-    suspension:       f['Suspension']       ?? null,
-    travel_mm:        f['Travel mm']        ?? null,
-    sizes_available:  f['Sizes Available']  ?? [],
-    image_url:        f['Image URL']        ?? null,
-    retailer_url:     f['Retailer URL']     ?? null,
-  };
+async function loadAll() {
+  if (_cache) return _cache;
+  const res = await fetch(DATA_URL);
+  if (!res.ok) throw new Error(`Failed to load bike data (HTTP ${res.status})`);
+  _cache = await res.json();
+  return _cache;
 }
 
-// ─── Filter params → Airtable filterByFormula ────────────────────────────────
+// ─── Filtering ────────────────────────────────────────────────────────────
 
-function buildFormula(params) {
-  const clauses = [];
+function applyFilters(bikes, params) {
+  return bikes.filter(b => {
+    if (params.category       && b.category        !== params.category)        return false;
+    if (params.frame_material && b.frame_material   !== params.frame_material) return false;
+    if (params.groupset_brand && b.groupset_brand   !== params.groupset_brand) return false;
+    if (params.brake_type     && b.brake_type       !== params.brake_type)     return false;
+    if (params.suspension     && b.suspension       !== params.suspension)     return false;
+    if (params.wheel_size     && b.wheel_size       !== params.wheel_size)     return false;
 
-  if (params.category)
-    clauses.push(`{Category}="${params.category}"`);
+    if (params.groupset_level &&
+        b.groupset_level?.toLowerCase() !== params.groupset_level.toLowerCase()) return false;
 
-  if (params.price_min != null)
-    clauses.push(`{Price EUR}>=${params.price_min}`);
+    if (params.price_min != null && b.price_eur < Number(params.price_min)) return false;
+    if (params.price_max != null && b.price_eur > Number(params.price_max)) return false;
 
-  if (params.price_max != null)
-    clauses.push(`{Price EUR}<=${params.price_max}`);
+    if (params.travel_min != null && (b.travel_mm == null || b.travel_mm < Number(params.travel_min))) return false;
+    if (params.travel_max != null && (b.travel_mm == null || b.travel_mm > Number(params.travel_max))) return false;
 
-  if (params.frame_material)
-    clauses.push(`{Frame Material}="${params.frame_material}"`);
+    if (params.tire_clearance_min != null &&
+        (b.tire_clearance_mm == null || b.tire_clearance_mm < Number(params.tire_clearance_min))) return false;
 
-  if (params.groupset_brand)
-    clauses.push(`{Groupset Brand}="${params.groupset_brand}"`);
+    if (params.q) {
+      const q = params.q.toLowerCase();
+      if (!b.brand?.toLowerCase().includes(q) && !b.model?.toLowerCase().includes(q)) return false;
+    }
 
-  if (params.groupset_level)
-    clauses.push(`{Groupset Level}="${params.groupset_level}"`);
-
-  if (params.brake_type)
-    clauses.push(`{Brake Type}="${params.brake_type}"`);
-
-  if (params.suspension)
-    clauses.push(`{Suspension}="${params.suspension}"`);
-
-  if (params.travel_min != null)
-    clauses.push(`{Travel mm}>=${params.travel_min}`);
-
-  if (params.travel_max != null)
-    clauses.push(`{Travel mm}<=${params.travel_max}`);
-
-  if (params.wheel_size)
-    clauses.push(`{Wheel Size}="${params.wheel_size}"`);
-
-  if (params.q) {
-    const q = params.q.replace(/"/g, '\\"');
-    clauses.push(`OR(FIND(LOWER("${q}"),LOWER({Brand})),FIND(LOWER("${q}"),LOWER({Model})))`);
-  }
-
-  return clauses.length === 0 ? '' : `AND(${clauses.join(',')})`;
-}
-
-// ─── Sort param → Airtable sort array ────────────────────────────────────────
-
-const SORT_MAP = {
-  price_asc:  [{ field: 'Price EUR',  direction: 'asc'  }],
-  price_desc: [{ field: 'Price EUR',  direction: 'desc' }],
-  weight_asc: [{ field: 'Weight g',   direction: 'asc'  }],
-  name_asc:   [{ field: 'Brand',      direction: 'asc'  }],
-};
-
-// ─── HTTP helper ─────────────────────────────────────────────────────────────
-
-async function airtableFetch(url) {
-  const key = window.CATALOG_API_KEY;
-  if (!key) throw new Error('CATALOG_API_KEY is not set');
-
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${key}` },
+    return true;
   });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body?.error?.message ?? `Airtable error ${res.status}`);
-  }
-
-  return res.json();
 }
 
-// ─── Public API ──────────────────────────────────────────────────────────────
+// ─── Sorting ──────────────────────────────────────────────────────────────
+
+function applySort(bikes, sort) {
+  const copy = [...bikes];
+  switch (sort) {
+    case 'price_desc': return copy.sort((a, b) => (b.price_eur ?? 0) - (a.price_eur ?? 0));
+    case 'weight_asc': return copy.sort((a, b) => (a.weight_g  ?? 0) - (b.weight_g  ?? 0));
+    case 'name_asc':   return copy.sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
+    default:           return copy.sort((a, b) => (a.price_eur ?? 0) - (b.price_eur ?? 0)); // price_asc
+  }
+}
+
+// ─── Public API ───────────────────────────────────────────────────────────
 
 /**
- * Fetch a paginated, filtered list of bikes.
+ * Returns a filtered, sorted, paginated slice of bikes.
  *
- * @param {object} params
- *   category, price_min, price_max, frame_material, groupset_brand,
- *   groupset_level, brake_type, suspension, travel_min, travel_max,
- *   wheel_size, q, page (1-based), per_page, sort
- * @returns {{ items: Bike[], total: number, page: number, per_page: number, offset: string|null }}
+ * @param {object} params  category, price_min, price_max, frame_material,
+ *                         groupset_brand, groupset_level, brake_type,
+ *                         suspension, travel_min, travel_max,
+ *                         tire_clearance_min, wheel_size, q, sort,
+ *                         page (1-based), per_page
+ * @returns {{ items, total, page, per_page, offset }}
  */
 export async function getBikes(params = {}) {
+  const all      = await loadAll();
+  const filtered = applyFilters(all, params);
+  const sorted   = applySort(filtered, params.sort);
+
   const perPage = params.per_page ?? PAGE_SIZE;
-  const url = new URL(BASE_URL);
-
-  const formula = buildFormula(params);
-  if (formula) url.searchParams.set('filterByFormula', formula);
-
-  const sortKey = params.sort ?? 'price_asc';
-  const sort = SORT_MAP[sortKey] ?? SORT_MAP.price_asc;
-  sort.forEach((s, i) => {
-    url.searchParams.set(`sort[${i}][field]`, s.field);
-    url.searchParams.set(`sort[${i}][direction]`, s.direction);
-  });
-
-  url.searchParams.set('pageSize', perPage);
-  if (params._offset) url.searchParams.set('offset', params._offset);
-
-  const data = await airtableFetch(url.toString());
+  const page    = params.page    ?? 1;
+  const start   = (page - 1) * perPage;
+  const items   = sorted.slice(start, start + perPage);
 
   return {
-    items:    (data.records ?? []).map(normalise),
-    total:    null,          // Airtable does not return total count
-    page:     params.page ?? 1,
+    items,
+    total:    filtered.length,
+    page,
     per_page: perPage,
-    offset:   data.offset ?? null,   // pass back as _offset for next page
+    offset:   start + items.length < filtered.length ? page + 1 : null,
   };
 }
 
 /**
- * Fetch a single bike by Airtable record ID.
+ * Returns a single bike by id.
  * @param {string} id
- * @returns {Bike}
+ * @returns {object}
  */
 export async function getBikeById(id) {
-  const data = await airtableFetch(`${BASE_URL}/${id}`);
-  return normalise(data);
+  const all  = await loadAll();
+  const bike = all.find(b => b.id === id);
+  if (!bike) throw new Error(`Bike not found: ${id}`);
+  return bike;
 }
 
 /**
- * Fetch valid filter option values.
- * Derived client-side from the table schema — no extra API call needed
- * because the select choices are fixed at table-creation time.
+ * Returns valid filter option values derived from the catalog itself.
  */
 export function getFilterOptions() {
   return {
@@ -174,9 +116,9 @@ export function getFilterOptions() {
     brake_types:     ['hydraulic-disc', 'mechanical-disc', 'rim'],
     wheel_sizes:     ['700c', '26', '27.5', '29'],
     groupset_levels: {
-      shimano:     ['claris', 'sora', 'tiagra', '105', 'ultegra', 'dura-ace', 'grx', 'deore', 'xt', 'xtr'],
-      sram:        ['apex', 'rival', 'force', 'red', 'nx-eagle', 'gx-eagle', 'x01-eagle', 'xx1-eagle'],
-      campagnolo:  ['centaur', 'potenza', 'chorus', 'record', 'super-record'],
+      shimano:    ['claris', 'sora', 'tiagra', '105', '105 Di2', 'ultegra', 'Ultegra Di2', 'dura-ace', 'GRX 600', 'GRX 820', 'deore', 'Deore', 'XT', 'XTR'],
+      sram:       ['apex', 'rival', 'force', 'red', 'NX Eagle', 'GX Eagle', 'X01 Eagle', 'XX1 Eagle'],
+      campagnolo: ['centaur', 'potenza', 'chorus', 'record', 'super-record'],
     },
   };
 }

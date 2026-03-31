@@ -43,7 +43,7 @@ The catalog is flat — bikes are standalone entities with no relational links. 
 - `weight_g` may be absent for some models; the UI must degrade gracefully (show "N/A").
 - `geometry` is only used by the frame size recommender feature.
 - `groupset_level` values are free strings normalized by the catalog team — the `/filters/options` endpoint provides the valid set.
-- The frontend caches the full result set in memory for the session; no local storage persistence is required.
+- The frontend caches `data/bikes.json` in memory after the first fetch; no local storage persistence is required.
 
 ## Wizard Profile (in-memory, never persisted)
 The guided wizard builds a transient profile used to pre-populate filters:

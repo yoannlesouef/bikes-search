@@ -15,10 +15,10 @@ python3 -m http.server 8080
 
 ## Stack
 - **Frontend**: Vanilla HTML / CSS / JavaScript (no framework, no build step)
-- **Data**: External SaaS bike catalog API (read-only, updated weekly)
-- **Hosting**: Static (Netlify / GitHub Pages / any CDN)
+- **Data**: `data/bikes.json` — committed to the repo, edit and commit to update the catalog
+- **Hosting**: GitHub Pages (auto-deploys on push to `main`)
 
-See `specs/architecture.md` for system design and `specs/api.md` for the API contract.
+See `specs/architecture.md` for system design and `specs/api.md` for the data access contract.
 
 ## Features
 | Feature | Spec | Status |

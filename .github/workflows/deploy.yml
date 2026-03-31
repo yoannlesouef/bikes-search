@@ -22,10 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Inject API key
-        run: |
-          echo "window.CATALOG_API_KEY = '${{ secrets.CATALOG_API_KEY }}';" > config.js
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
