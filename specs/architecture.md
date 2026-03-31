@@ -10,6 +10,7 @@ A fully static web application. No server-side rendering, no backend. The browse
 | Data source | SaaS bike catalog API (REST/JSON) | Managed externally, updated weekly by editorial team |
 | Hosting | Static file host (Netlify / GitHub Pages) | Free tier covers traffic; no server to maintain |
 | Domain | www.bikes-search.com | Production domain |
+| Test URL | https://yoannlesouef.github.io/bikes-search/ | GitHub Pages staging |
 
 ## Data flow
 ```
